@@ -53,7 +53,8 @@ try:
     serial_dev = '/dev/tty.usbmodemfd121'
     ser = serial.Serial(serial_dev, 9600)
 except serial.serialutil.SerialException, e:
-    print >>sys.stderr, "Check your serial port definition: (%s)"%(serial_dev, str(e))
+    print >>sys.stderr, "Check your serial port definition: (%s)"%(str(e))
+    ser = None
 ###########################################
 # Terms you want to track -- discussion in meetup
 terms_to_watch = ["red", "blue", "yellow", "orange", "black"]
@@ -63,18 +64,19 @@ terms = { terms_to_watch[i]:i for i in range(len(terms_to_watch))}
 # for testing, writes and reads any string from serial device
 def echo(x):
     print "writing to arduino: ", x
-    ser.write("%s\n"%x)
+    if ser:
+        ser.write("%s\n"%x)
     print "reading from arduino: ", ser.readline()
 
 # This function writes to the arduino through serial port
 def write_term(x):
     res = "None"
     x = x.lower()
-    if x in terms:
+    if x in terms and ser:
         ser.write(terms[x])
         res = ser.read()
     else:
-        print >>sys.stderr, "Invalid term (%s) using (%s)"%(x)
+        print >>sys.stderr, "Invalid term (%s) or no serial connection detected."%(x)
     return res    
 
 TIME_DELAY = 1.5 # seconds

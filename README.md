@@ -21,10 +21,6 @@ install distribute & pip:
 install official 2.7.5 Python binary: 
 `http://www.python.org/ftp/python/2.7.5/python-2.7.5.msi` 
 
-[From http://www.python.org/getit/]
-
-setuptools & pip (http://stackoverflow.com/a/12476379/1851811)
-
 install setuptools: 
 `http://www.lfd.uci.edu/~gohlke/pythonlibs/#setuptools` 
 
@@ -36,7 +32,10 @@ install pip:
 [Download ==> pip-1.3.1.win-amd64-py2.7.exe]
 
 
-### After above, regardless of platform, install the necessary packages: 
+((setuptools & pip ref: http://stackoverflow.com/a/12476379/1851811))
+
+
+### After above, on either operating system, install the necessary packages: 
 install req'd packages (possibly `sudo`):
 
 	$ pip install requests

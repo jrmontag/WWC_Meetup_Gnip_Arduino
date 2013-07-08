@@ -74,24 +74,35 @@ def write_term(x):
     else:
         print >>sys.stderr, "Invalid color (%s)"%x
 
+TIME_DELAY = 1.5 # seconds
+
 if __name__=="__main__":
+    # initial the counters for the last terms read from the server
     last = {x:0 for x in terms}
+    # build a format string of the right length
+    tmpfmt = "%s:"*len(terms)
+    # repeat this forever (?)
     while True:
-        tmp = "%s:%s:%s:%s"%tuple(terms)
+        tmp = tmpfmt%tuple(terms)
         response = requests.get(CNT_URL%tmp)
         try:
             res_dict = json.loads(response.text)
         except ValueError:
             print >>sys.stderr, "Invalid json", response.text
-        #echo(response.text)
+        # let's see some output
         print response.text
+        # step through the terms and do something
         for c in terms:
             if c in res_dict["keys"]:
+                # calculate count diffs from last time through the loop
                 diff = int(res_dict["keys"][c]["count"]) - last[c]
                 if diff > 20:
+                    # write to the arduino over the serial port
                     write_term(c)
+                    # see what the arduino returns...
                     print diff, ser.read()
+                    # log counts for next diff
                     last[c] = int(res_dict["keys"][c]["count"])
                 else:
-                    print diff, "skipping"
-                time.sleep(1.5)
+                    print >>sys.stderr,diff, "skipping"
+                time.sleep(TIME_DELAY)

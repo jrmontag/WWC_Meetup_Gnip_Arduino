@@ -60,24 +60,24 @@ ser = serial.Serial('/dev/tty.usbmodemfd121', 9600)
 
 ###########################################
 
-colors = ["red", "blue", "yellow", "orange"]
+terms = ["red", "blue", "yellow", "orange", "black"]
 
 def echo(x):
     print "writing input: ", x
     ser.write("%s\n"%x)
     print "reading arduino: ", ser.readline()
 
-def color(x):
+def write_term(x):
     x = x.lower()
-    if x in colors:
+    if x in terms:
         ser.write(x[0])
     else:
         print >>sys.stderr, "Invalid color (%s)"%x
 
 if __name__=="__main__":
-    last = {x:0 for x in colors}
+    last = {x:0 for x in terms}
     while True:
-        tmp = "%s:%s:%s:%s"%tuple(colors)
+        tmp = "%s:%s:%s:%s"%tuple(terms)
         response = requests.get(CNT_URL%tmp)
         try:
             res_dict = json.loads(response.text)
@@ -85,11 +85,11 @@ if __name__=="__main__":
             print >>sys.stderr, "Invalid json", response.text
         #echo(response.text)
         print response.text
-        for c in colors:
+        for c in terms:
             if c in res_dict["keys"]:
                 diff = int(res_dict["keys"][c]["count"]) - last[c]
                 if diff > 20:
-                    color(c)
+                    write_term(c)
                     print diff, ser.read()
                     last[c] = int(res_dict["keys"][c]["count"])
                 else:

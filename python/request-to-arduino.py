@@ -57,7 +57,7 @@ except serial.serialutil.SerialException, e:
     ser = None
 ###########################################
 # Terms you want to track -- discussion in meetup
-terms_to_watch = ["red", "blue", "yellow", "orange", "black"]
+terms_to_watch = ["red", "blue", "obama", "bieber", "black"]
 # simple protocol for communication with arduino
 terms = { terms_to_watch[i]:i for i in range(len(terms_to_watch))}
 
@@ -72,11 +72,14 @@ def echo(x):
 def write_term(x):
     res = "None"
     x = x.lower()
-    if x in terms and ser:
-        ser.write(terms[x])
-        res = ser.read()
+    if x in terms:
+        if ser:
+            ser.write(terms[x])
+            res = ser.read()
+        else:
+            print >>sys.stderr, "No serial connection detected."
     else:
-        print >>sys.stderr, "Invalid term (%s) or no serial connection detected."%(x)
+        print >>sys.stderr, "Invalid term (%s)."%x
     return res    
 
 TIME_DELAY = 1.5 # seconds

@@ -59,7 +59,7 @@ except serial.serialutil.SerialException, e:
 # Terms you want to track -- discussion in meetup
 terms_to_watch = ["red", "blue", "obama", "bieber", "black"]
 # simple protocol for communication with arduino
-terms = { terms_to_watch[i]:i for i in range(len(terms_to_watch))}
+terms = { terms_to_watch[i]:1+i for i in range(len(terms_to_watch))}
 
 # for testing, writes and reads any string from serial device
 def echo(x):

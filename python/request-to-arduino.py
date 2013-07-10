@@ -34,7 +34,6 @@ TOP_URL = "http://shendrickson3.gnip.com:8090/redr8r/v1/top.json"
 #              obama: 690
 #              }
 #          }
-
 CNT_URL = "http://shendrickson3.gnip.com:8090/redr8r/v1/%s/count.json"
 # Example output
 # {
@@ -57,7 +56,8 @@ except serial.serialutil.SerialException, e:
     ser = None
 ###########################################
 # Terms you want to track -- discussion in meetup
-terms_to_watch = ["red", "blue", "obama", "bieber", "black"]
+# up to 9 terms here:
+terms_to_watch = ["orange", "blue"]
 # simple protocol for communication with arduino
 terms = { terms_to_watch[i]:1+i for i in range(len(terms_to_watch))}
 
@@ -71,18 +71,15 @@ def echo(x):
 # This function writes to the arduino through serial port
 def write_term(x):
     res = "None"
-    x = x.lower()
-    if x in terms:
-        if ser:
-            ser.write(terms[x])
-            res = ser.read()
-        else:
-            print >>sys.stderr, "No serial connection detected."
+    if ser:
+        ser.write(str(x))
+        res = ser.read()
     else:
-        print >>sys.stderr, "Invalid term (%s)."%x
+        print >>sys.stderr, "No serial connection detected."
     return res    
 
-TIME_DELAY = 1.5 # seconds
+TIME_DELAY = 3 # seconds
+THRESHOLD = 20 # minimum count change needed in order to signal arduino
 
 if __name__=="__main__":
     # initial the counters for the last terms read from the server
@@ -98,17 +95,17 @@ if __name__=="__main__":
         except ValueError:
             print >>sys.stderr, "Invalid json:", response.text
         # let's see some output
-        print response.text
+        #print >>sys.stderr,response.text
         # step through the terms and do something
         for c in terms:
             if c in res_dict["keys"]:
                 # calculate count diffs from last time through the loop
                 diff = int(res_dict["keys"][c]["count"]) - last[c]
-                if diff > 20:
+                if diff > THRESHOLD:
                     # write to the arduino over the serial port
-                    print diff, write_term(c)
+                    print "term: %10s  count change: %5d  blinks: %d  reponse: %s"%(c, diff, terms[c], write_term(terms[c]))
                     # keep track of counts for next diff
                     last[c] = int(res_dict["keys"][c]["count"])
                 else:
-                    print >>sys.stderr,diff, "skipping"
+                    print "term: %10s  skipping: %d <= %d"%(c, diff, THRESHOLD)
                 time.sleep(TIME_DELAY)

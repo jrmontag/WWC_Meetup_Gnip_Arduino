@@ -1,17 +1,13 @@
-//
-// Simple way to exercise the serial port
-//
-//
+/*
+Simple way to exercise the serial port
 
-//
-// Operation:
-//    Open the Serial Montior
-//    On startup (or after hitting the reset button, the arduino says hello
-//    Enter any string you want after than and hit return
-//    Notice that the code on the arduino is looking for a newline char. The 
-//    Serial monitor doesn't send on by default.  User the dropdown at the bottom
-//    to read "Newline"
-//
+
+Instructions:
+  -open the Serial Montior
+  -on startup (or after hitting the reset button, the arduino says hello
+  -serial monitor doesn't send on by default; select "Newline" from the dropdown
+  -enter any string you want and hit return or click Send  
+*/
 
 String buffer = ""; 
 char c;

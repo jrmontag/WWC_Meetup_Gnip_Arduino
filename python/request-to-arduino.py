@@ -85,11 +85,11 @@ terms = { terms_to_watch[i]:1+i for i in range(len(terms_to_watch))}
 def write_term(x):
     res = "None"
     if ser:
-        ser.write(str(x))
-        res = ser.read()
+        ser.write(str(x)[0])
+        res = ser.readline()
     else:
         print >>sys.stderr, "No serial connection detected."
-    return res    
+    return res.strip()    
 
 TIME_DELAY = 3 # seconds
 THRESHOLD = 20 # minimum count change needed in order to signal arduino

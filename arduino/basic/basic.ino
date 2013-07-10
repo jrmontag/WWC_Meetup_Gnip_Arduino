@@ -30,19 +30,23 @@ void read_serial_input() {
        static char string_value[2]; 
        // read the incoming byte
        // we are only reading 1 char, so blinks are only 0-9
-       c = (char) Serial.read(); 
-       string_value[0]=c;
-       // valid string ending 
-       string_value[1]='\0';
-       int value = atoi(string_value);
-       for (int j = 0; j<value; j++) {
-           digitalWrite(led, HIGH); // turn the LED on (HIGH is the voltage level)
-           delay(300);            
-           digitalWrite(led, LOW);  // turn the LED off by making the voltage LOW
-           delay(300);           
-       } 
-       delay(600);
+       c = (char) Serial.read();
+       if (c != '\n') {
+         string_value[0]=c;
+         // valid string ending 
+         string_value[1]='\0';
+         int value = atoi(string_value);
+         for (int j = 0; j<value; j++) {
+             digitalWrite(led, HIGH); // turn the LED on (HIGH is the voltage level)
+             delay(300);            
+             digitalWrite(led, LOW);  // turn the LED off by making the voltage LOW
+             delay(300);           
+         } 
+         Serial.print("count change\n");
+         delay(500);
+       }
+       else {
+         Serial.print("newline\n");
+       }
     }
-   Serial.print(c);
-   c = 'n';
 }

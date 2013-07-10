@@ -44,3 +44,22 @@ install req'd packages (possibly `sudo`):
 
 ##Party on, Wayne!
 
+###Warm-up
+1. Plug in your Arduino. 
+2. Start Arduino app
+3. Select appropriate Arduino Board (probably Uno) [Tools > Board]
+4. Select correct serial port (probably `tty.usbmodem` on Linux/OS X, 0 or 1 on Windows) [Tools > Serial Port] 
+5. Burn echo.ino onto your board. Follow instructions in the code & play with it.  
+
+###Game Time
+1. Find your serial port. Run this from your command line:
+
+`ls /dev/ | grep tty.usbmodem`
+
+2. Copy / paste the result as the `usbmodem` string near the top of `python/request-to-arduino.py`
+3. Burn basic.ino onto your board. 
+4. Run request-to-arduino.py script ( `./request-to-arduino.py` )
+5. Experiment with search terms in the Python script 
+
+
+

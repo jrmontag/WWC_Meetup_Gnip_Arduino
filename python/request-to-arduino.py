@@ -1,21 +1,32 @@
 #!/usr/bin/env python
+
+###########################################
 #  WWC Meetup
 #     Gnip and Arduino Fun!
 #     2013-07-10
-###########################################
+#
 # Make sure you have pyserial and requests 
 # packages install and working for your python 
 # installation:
 #    Pyserial http://pyserial.sourceforge.net/
 #    Requests http://docs.python-requests.org/en/latest/
 ###########################################
+
+###
+# copy the result of your 'ls /dev/ .....' here:
+usbmodem = 'tty.usbmodem1411'
+###
+
+
 import serial
 import requests
 import json
 import sys
 import time
-###########################################
-# Temporary Gnip interface to real tim social data
+
+###
+# Temporary Gnip interface to real time social data
+#
 TOP_URL = "http://shendrickson3.gnip.com:8090/redr8r/v1/top.json"
 # Example output
 #  {
@@ -46,27 +57,29 @@ CNT_URL = "http://shendrickson3.gnip.com:8090/redr8r/v1/%s/count.json"
 #         version: "v1"
 #         }
 ###########################################
-# ls the contents of your /dev folder.  Look for something
-# like below. Change the string to match yours.
+
 try:
-    serial_dev = '/dev/tty.usbmodemfd121'
+    # *nix / Mac OS X
+    serial_dev = '/dev/' + usbmodem
+    #On Windows, try uncommenting the following:
+    #serial_dev = 0
     ser = serial.Serial(serial_dev, 9600)
 except serial.serialutil.SerialException, e:
     print >>sys.stderr, "Check your serial port definition: (%s)"%(str(e))
     ser = None
 ###########################################
+
+##################################################
 # Terms you want to track -- discussion in meetup
-# up to 9 terms here:
+# (<= 9 terms)
+#
 terms_to_watch = ["orange", "blue"]
+#
+##################################################
+
+
 # simple protocol for communication with arduino
 terms = { terms_to_watch[i]:1+i for i in range(len(terms_to_watch))}
-
-# for testing, writes and reads any string from serial device
-def echo(x):
-    print "writing to arduino: ", x
-    if ser:
-        ser.write("%s\n"%x)
-    print "reading from arduino: ", ser.readline()
 
 # This function writes to the arduino through serial port
 def write_term(x):
@@ -86,7 +99,7 @@ if __name__=="__main__":
     last = {x:0 for x in terms}
     # build a format string of the right length
     tmpfmt = "%s:"*len(terms)
-    # repeat this forever (?)
+    # repeat this forever
     while True:
         tmp = tmpfmt%tuple(terms.keys())
         response = requests.get(CNT_URL%tmp)
@@ -97,6 +110,7 @@ if __name__=="__main__":
         # let's see some output
         #print >>sys.stderr,response.text
         # step through the terms and do something
+        print '*'
         for c in terms:
             if c in res_dict["keys"]:
                 # calculate count diffs from last time through the loop
